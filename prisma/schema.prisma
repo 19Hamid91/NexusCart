@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  DISPATCHED
+  CANCELLED
+}
+
+enum ShipmentStatus {
+  PROCESSING
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+}
+
+model Product {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String
+  sku       String      @unique
+  price     Decimal     @db.Decimal(12, 2)
+  createdAt DateTime    @default(now()) @map("created_at")
+  stock     Stock?
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Stock {
+  id               String  @id @default(uuid()) @db.Uuid
+  productId        String  @unique @map("product_id") @db.Uuid
+  product          Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity         Int
+  reservedQuantity Int     @default(0) @map("reserved_quantity")
+
+  @@map("stocks")
+}
+
+model Order {
+  id          String      @id @default(uuid()) @db.Uuid
+  userId      String      @map("user_id") @db.Uuid
+  totalAmount Decimal     @map("total_amount") @db.Decimal(12, 2)
+  status      OrderStatus @default(PENDING_PAYMENT)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  items       OrderItem[]
+  shipment    Shipment?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  orderId   String   @map("order_id") @db.Uuid
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String   @map("product_id") @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Decimal  @map("unit_price") @db.Decimal(12, 2)
+
+  @@map("order_items")
+}
+
+model Shipment {
+  id         String         @id @default(uuid()) @db.Uuid
+  orderId    String         @unique @map("order_id") @db.Uuid
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  trackingId String?        @unique @map("tracking_id")
+  courierName String        @map("courier_name")
+  status     ShipmentStatus @default(PROCESSING)
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+
+  @@map("shipments")
+}
