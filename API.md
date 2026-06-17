@@ -111,6 +111,40 @@ All GET data-fetching or list-based responses adhere to the standard response sh
   }
   ```
 
+#### 1.4 Create Product
+- **Endpoint**: `POST /products/create`
+- **Authentication**: None
+- **Body Payload** (`application/json`):
+  ```json
+  {
+    "name": "Sony PlayStation 5",
+    "sku": "PS5-001",
+    "price": 499.99,
+    "initialStock": 10
+  }
+  ```
+- **Response Shape**:
+  ```json
+  {
+    "success": true,
+    "message": "Product created successfully",
+    "RecordCount": 1,
+    "data": {
+      "id": "8c67c87c-ef93-4ee1-b9de-c276a75043bf",
+      "name": "Sony PlayStation 5",
+      "sku": "PS5-001",
+      "price": "499.99",
+      "createdAt": "2026-06-17T04:22:00.000Z",
+      "stock": {
+        "id": "cf6378e9-d75d-4f24-9b21-69e120f269ba",
+        "productId": "8c67c87c-ef93-4ee1-b9de-c276a75043bf",
+        "quantity": 10,
+        "reservedQuantity": 0
+      }
+    }
+  }
+  ```
+
 ---
 
 ### 2. Orders Module
