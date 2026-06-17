@@ -12,6 +12,7 @@ describe('ProductsController', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       replenishStock: jest.fn(),
+      create: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -45,7 +46,9 @@ describe('ProductsController', () => {
       const product = { id: '1', sku: 'A', stock: null };
       service.findById.mockResolvedValue(product as any);
 
-      const result = await controller.findById('123e4567-e89b-12d3-a456-426614174000');
+      const result = await controller.findById(
+        '123e4567-e89b-12d3-a456-426614174000',
+      );
       expect(result).toBeInstanceOf(ApiResponse);
       expect(result.data).toEqual(product);
     });
@@ -62,6 +65,22 @@ describe('ProductsController', () => {
       });
       expect(result).toBeInstanceOf(ApiResponse);
       expect(result.data).toEqual(stock);
+    });
+  });
+
+  describe('create', () => {
+    it('should create a product successfully', async () => {
+      const product = { id: '1', sku: 'A', stock: null };
+      service.create.mockResolvedValue(product as any);
+
+      const result = await controller.create({
+        name: 'Sample Product',
+        sku: 'PROD123',
+        price: 10,
+        initialStock: 10,
+      });
+      expect(result).toBeInstanceOf(ApiResponse);
+      expect(result.data).toEqual(product);
     });
   });
 });

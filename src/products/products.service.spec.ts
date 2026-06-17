@@ -26,6 +26,7 @@ describe('ProductsService', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       replenishStock: jest.fn(),
+      create: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -93,6 +94,34 @@ describe('ProductsService', () => {
       await expect(
         service.replenishStock({ productId: 'non-existent', quantity: 5 }),
       ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('create', () => {
+    it('should create a product successfully', async () => {
+      repository.create.mockResolvedValue(mockProduct as any);
+      const result = await service.create({
+        name: 'Sample Product',
+        sku: 'PROD123',
+        price: 10,
+        initialStock: 10,
+      });
+      expect(result).toEqual(mockProduct);
+      expect(repository.create).toHaveBeenCalled();
+    });
+
+    it('should log and throw error when repository fails', async () => {
+      const error = new Error('Database error');
+      repository.create.mockRejectedValue(error);
+
+      await expect(
+        service.create({
+          name: 'Sample Product',
+          sku: 'PROD123',
+          price: 10,
+          initialStock: 10,
+        }),
+      ).rejects.toThrow(error);
     });
   });
 });
