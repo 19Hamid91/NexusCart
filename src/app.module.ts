@@ -5,6 +5,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { PrismaModule } from './infrastructure/database/prisma.module.js';
 import 'dotenv/config';
 
 @Module({
@@ -18,6 +19,7 @@ import 'dotenv/config';
         maxRetriesPerRequest: null,
       },
     }),
+    PrismaModule,
     ProductsModule,
     OrdersModule,
     WebhooksModule,
