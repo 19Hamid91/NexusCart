@@ -57,4 +57,21 @@ export class ProductsRepository {
       include: { stock: true },
     });
   }
+
+  // Create product
+  async create(name: string, sku: string, price: number, initialStock: number) {
+    return this.prisma.product.create({
+      data: {
+        name,
+        sku,
+        price,
+        stock: {
+          create: {
+            quantity: initialStock,
+          },
+        },
+      },
+      include: { stock: true },
+    });
+  }
 }

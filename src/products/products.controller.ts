@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ReplenishStockDto } from './dto/replenish-stock.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 import { ApiResponse } from '../common/dto/api-response.dto';
 
 @Controller('products')
@@ -31,5 +32,11 @@ export class ProductsController {
   async replenishStock(@Body() dto: ReplenishStockDto) {
     const updatedStock = await this.productsService.replenishStock(dto);
     return new ApiResponse(updatedStock, 'Stock replenished successfully');
+  }
+
+  @Post('create')
+  async create(@Body() dto: CreateProductDto) {
+    const product = await this.productsService.create(dto);
+    return new ApiResponse(product, 'Product created successfully');
   }
 }
